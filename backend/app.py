@@ -4,6 +4,7 @@ from config import Config
 from routes.auth_routes import auth_bp
 from routes.repository_routes import repository_bp
 from routes.ai_routes import ai_bp
+from database import initialize_database
 
 import os
 
@@ -22,7 +23,7 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(repository_bp)
 app.register_blueprint(ai_bp)
 
-
+initialize_database()
 @app.route("/")
 def home():
 
