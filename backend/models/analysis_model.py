@@ -1,21 +1,6 @@
 from database import get_db_connection
 
 
-def read_clob(value):
-    """
-    Safely read an Oracle CLOB while the database
-    connection is still open.
-    """
-
-    if value is None:
-        return None
-
-    if hasattr(value, "read"):
-        return value.read()
-
-    return value
-
-
 def save_analysis(
     repository_id,
     summary,
@@ -41,18 +26,9 @@ def save_analysis(
                 suggestions
             )
             VALUES
-            (
-                :1,
-                :2,
-                :3,
-                :4,
-                :5,
-                :6
-            )
-            RETURNING id INTO :7
+            (%s, %s, %s, %s, %s, %s)
+            RETURNING id
         """
-
-        new_id = cursor.var(int)
 
         cursor.execute(
             query,
@@ -62,14 +38,13 @@ def save_analysis(
                 technologies,
                 architecture,
                 important_files,
-                suggestions,
-                new_id
+                suggestions
             )
         )
 
-        connection.commit()
+        analysis_id = cursor.fetchone()[0]
 
-        analysis_id = new_id.getvalue()[0]
+        connection.commit()
 
         return analysis_id
 
@@ -97,7 +72,7 @@ def get_analysis(repository_id):
                 suggestions,
                 created_at
             FROM analyses
-            WHERE repository_id = :1
+            WHERE repository_id = %s
             ORDER BY created_at DESC
         """
 
@@ -111,27 +86,16 @@ def get_analysis(repository_id):
         if not row:
             return None
 
-        # IMPORTANT:
-        # Read CLOBs BEFORE closing the connection.
-
-        summary = read_clob(row[2])
-        technologies = read_clob(row[3])
-        architecture = read_clob(row[4])
-        important_files = read_clob(row[5])
-        suggestions = read_clob(row[6])
-
-        analysis = {
+        return {
             "id": row[0],
             "repository_id": row[1],
-            "summary": summary,
-            "technologies": technologies,
-            "architecture": architecture,
-            "important_files": important_files,
-            "suggestions": suggestions,
+            "summary": row[2],
+            "technologies": row[3],
+            "architecture": row[4],
+            "important_files": row[5],
+            "suggestions": row[6],
             "created_at": row[7]
         }
-
-        return analysis
 
     finally:
 
