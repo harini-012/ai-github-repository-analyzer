@@ -1,0 +1,48 @@
+body {
+    background: #f5f7fa;
+}
+
+
+.auth-container {
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+}
+
+
+.auth-card {
+    background: white;
+
+    width: 100%;
+
+    max-width: 450px;
+
+    padding: 40px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 0, 0, 0.1);
+}
+
+
+.auth-card h2 {
+    font-weight: 700;
+}
+
+
+.form-control {
+    padding: 12px;
+}
+
+
+.form-control:focus {
+    box-shadow: none;
+}

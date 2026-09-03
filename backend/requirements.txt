@@ -1,0 +1,7 @@
+Flask
+requests
+python-dotenv
+oracledb
+groq
+Werkzeug
+gunicorn
